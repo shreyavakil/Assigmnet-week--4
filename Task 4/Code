@@ -1,0 +1,15 @@
+SET @row_index = 0;
+
+SELECT ROUND(AVG(LAT_N), 4) AS Median_LAT_N
+FROM (
+    SELECT LAT_N
+    FROM (
+        SELECT LAT_N, @row_index := @row_index + 1 AS row_num
+        FROM STATION, (SELECT @row_index := 0) AS init
+        ORDER BY LAT_N
+    ) AS ordered
+    WHERE row_num IN (
+        FLOOR((@row_index + 1) / 2),
+        CEIL((@row_index + 1) / 2)
+    )
+) AS median_values;
